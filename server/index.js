@@ -16,7 +16,13 @@ app.use(cors({
 }));
 
 // API Routes - MUST be defined before static file serving
-app.get("/api/menu", async (req, res) => {
+// Use app.use to ensure it matches before any static middleware
+app.use("/api/menu", async (req, res) => {
+  // Only handle GET requests
+  if (req.method !== "GET") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
   const { date, meal } = req.query;
 
   if (!date) {
