@@ -9,7 +9,18 @@ export const fetchData = async (date: string, meal?: string): Promise<unknown> =
     url.searchParams.set('meal', meal);
   }
 
-  const res = await fetch(url.toString());
+  const urlString = url.toString();
+  console.log('Fetching from:', urlString);
+
+  const res = await fetch(urlString);
+
+  // Check content type to ensure we're getting JSON, not HTML
+  const contentType = res.headers.get('content-type');
+  if (!contentType || !contentType.includes('application/json')) {
+    const text = await res.text();
+    console.error('Received non-JSON response:', text.substring(0, 200));
+    throw new Error(`Expected JSON but received ${contentType}. The API route may not be working correctly.`);
+  }
 
   if (!res.ok) {
     const error = await res.json().catch(() => ({ error: 'Backend failed to fetch menu data' }));
