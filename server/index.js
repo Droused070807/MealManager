@@ -15,7 +15,7 @@ app.use(cors({
   methods: ["GET"],
 }));
 
-// API Routes
+// API Routes - MUST be defined before static file serving
 app.get("/api/menu", async (req, res) => {
   const { date, meal } = req.query;
 
@@ -35,12 +35,20 @@ app.get("/api/menu", async (req, res) => {
 // Serve frontend if dist folder exists (for full-stack deployment)
 const distPath = join(__dirname, "..", "dist");
 if (existsSync(distPath)) {
-  app.use(express.static(distPath));
-  
-  // Serve index.html for all non-API routes
-  app.get("*", (req, res, next) => {
+  // Serve static files, but skip API routes
+  app.use((req, res, next) => {
     if (req.path.startsWith("/api")) {
-      return next();
+      return next(); // Don't serve static files for API routes
+    }
+    // Serve static files for non-API routes
+    express.static(distPath, { index: false })(req, res, next);
+  });
+  
+  // Serve index.html for all non-API routes (SPA fallback)
+  app.get("*", (req, res) => {
+    // Double check - should never reach here for API routes due to route above
+    if (req.path.startsWith("/api")) {
+      return res.status(404).json({ error: "API endpoint not found" });
     }
     const indexPath = join(distPath, "index.html");
     if (existsSync(indexPath)) {
