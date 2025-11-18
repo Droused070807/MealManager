@@ -26,7 +26,14 @@ const apiRouter = express.Router();
 
 // Test endpoint to verify API is working
 apiRouter.get("/test", (req, res) => {
-  res.json({ message: "API is working!", timestamp: new Date().toISOString() });
+  console.log("API /api/test endpoint called");
+  res.json({ message: "API is working!", timestamp: new Date().toISOString(), path: req.path });
+});
+
+// Catch-all for API router to handle unmatched API routes
+apiRouter.use("*", (req, res) => {
+  console.log("API route not found in router:", req.originalUrl);
+  res.status(404).json({ error: "API endpoint not found", path: req.path });
 });
 
 apiRouter.get("/menu", async (req, res) => {
