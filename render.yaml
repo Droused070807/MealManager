@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: mealmanager-api
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    rootDir: server
+    envVars:
+      - key: NODE_VERSION
+        value: 22.22.0
