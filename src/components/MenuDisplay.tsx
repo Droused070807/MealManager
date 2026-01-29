@@ -700,16 +700,6 @@ function MacroBar({
   const percentage = Math.min((rawValue / max) * 100, 100);
   
   // Determine daily value percentage
-  const dailyValues: { [key: string]: number } = {
-    'Protein': 50,
-    'Carbs': 275,
-    'Fat': 78,
-    'Sugar': 50,
-  };
-  
-  const dailyValue = dailyValues[label] || max;
-  const dvPercentage = Math.min((rawValue / dailyValue) * 100, 100);
-  
   // Color based on health status
   const getBarColor = () => {
     if (label === 'Sugar' && rawValue > 15) return 'from-orange-400 to-red-400';

@@ -273,32 +273,6 @@ export default function MealPlanner({ onBack }: { onBack?: () => void }) {
     return selected?.quantity || 0;
   };
 
-  const allItems = useMemo(() => {
-    const items: Array<{ item: MenuItem; meal: "breakfast" | "lunch" | "dinner"; category: string }> = [];
-    if (breakfastData) {
-      breakfastData.period.categories.forEach((cat) => {
-        cat.items.forEach((item) => {
-          items.push({ item, meal: "breakfast", category: cat.name });
-        });
-      });
-    }
-    if (lunchData) {
-      lunchData.period.categories.forEach((cat) => {
-        cat.items.forEach((item) => {
-          items.push({ item, meal: "lunch", category: cat.name });
-        });
-      });
-    }
-    if (dinnerData) {
-      dinnerData.period.categories.forEach((cat) => {
-        cat.items.forEach((item) => {
-          items.push({ item, meal: "dinner", category: cat.name });
-        });
-      });
-    }
-    return items.sort((a, b) => getProtein(b.item) - getProtein(a.item));
-  }, [breakfastData, lunchData, dinnerData]);
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
@@ -846,7 +820,7 @@ export default function MealPlanner({ onBack }: { onBack?: () => void }) {
                     const quantity = getSelectedQuantity(item.id, "breakfast");
                     return (
                       <div key={item.id} className="animate-in fade-in zoom-in duration-500" style={{ animationDelay: `${idx * 50}ms` }}>
-                        <ItemCard item={item} protein={protein} meal="breakfast" selected={selected} quantity={quantity} onToggle={() => toggleItem(item, "breakfast")} onQuantityChange={(delta) => updateQuantity(item.id, "breakfast", delta)} />
+                        <ItemCard item={item} protein={protein} selected={selected} quantity={quantity} onToggle={() => toggleItem(item, "breakfast")} onQuantityChange={(delta) => updateQuantity(item.id, "breakfast", delta)} />
                       </div>
                     );
                   })}
@@ -891,7 +865,7 @@ export default function MealPlanner({ onBack }: { onBack?: () => void }) {
                     const quantity = getSelectedQuantity(item.id, "lunch");
                     return (
                       <div key={item.id} className="animate-in fade-in zoom-in duration-500" style={{ animationDelay: `${idx * 50}ms` }}>
-                        <ItemCard item={item} protein={protein} meal="lunch" selected={selected} quantity={quantity} onToggle={() => toggleItem(item, "lunch")} onQuantityChange={(delta) => updateQuantity(item.id, "lunch", delta)} />
+                        <ItemCard item={item} protein={protein} selected={selected} quantity={quantity} onToggle={() => toggleItem(item, "lunch")} onQuantityChange={(delta) => updateQuantity(item.id, "lunch", delta)} />
                       </div>
                     );
                   })}
@@ -936,7 +910,7 @@ export default function MealPlanner({ onBack }: { onBack?: () => void }) {
                     const quantity = getSelectedQuantity(item.id, "dinner");
                     return (
                       <div key={item.id} className="animate-in fade-in zoom-in duration-500" style={{ animationDelay: `${idx * 50}ms` }}>
-                        <ItemCard item={item} protein={protein} meal="dinner" selected={selected} quantity={quantity} onToggle={() => toggleItem(item, "dinner")} onQuantityChange={(delta) => updateQuantity(item.id, "dinner", delta)} />
+                        <ItemCard item={item} protein={protein} selected={selected} quantity={quantity} onToggle={() => toggleItem(item, "dinner")} onQuantityChange={(delta) => updateQuantity(item.id, "dinner", delta)} />
                       </div>
                     );
                   })}
@@ -967,7 +941,6 @@ export default function MealPlanner({ onBack }: { onBack?: () => void }) {
 function ItemCard({
   item,
   protein,
-  meal,
   selected,
   quantity,
   onToggle,
@@ -975,7 +948,6 @@ function ItemCard({
 }: {
   item: MenuItem;
   protein: number;
-  meal: "breakfast" | "lunch" | "dinner";
   selected: boolean;
   quantity: number;
   onToggle: () => void;

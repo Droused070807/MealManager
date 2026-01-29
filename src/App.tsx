@@ -110,7 +110,7 @@ function App() {
                 <button
                   onClick={() => setViewMode("planner")}
                   className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 sm:py-2.5 transition-all font-semibold text-sm ${
-                    viewMode === "planner"
+                    (viewMode as ViewMode) === "planner"
                       ? "bg-white/10 text-white"
                       : "text-gray-400 hover:text-gray-300"
                   }`}
