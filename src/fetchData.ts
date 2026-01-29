@@ -1,8 +1,9 @@
-// Use Netlify Functions for API calls
+// Use backend server for API calls (Render deployment)
+const API_URL = import.meta.env.VITE_API_URL || 'https://mealmanager.onrender.com';
+
 export const fetchData = async (date: string, meal?: string): Promise<unknown> => {
   try {
-    // Netlify Functions are at /.netlify/functions/[function-name]
-    const url = new URL('/.netlify/functions/menu', window.location.origin);
+    const url = new URL(`${API_URL}/api/menu`);
     url.searchParams.set('date', date);
     if (meal) {
       url.searchParams.set('meal', meal);
