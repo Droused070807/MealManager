@@ -11,17 +11,30 @@ export const fetchData = async (date: string, meal?: string): Promise<unknown> =
 
     console.log('Fetching from:', url.toString());
     
-    const response = await fetch(url.toString());
+    // Add 90 second timeout for Render cold starts
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 90000);
     
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ error: 'Failed to fetch menu data' }));
-      throw new Error(error.error || `HTTP error! status: ${response.status}`);
+    try {
+      const response = await fetch(url.toString(), { signal: controller.signal });
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ error: 'Failed to fetch menu data' }));
+        throw new Error(error.error || `HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('Menu data received');
+      
+      return data;
+    } catch (fetchError: any) {
+      clearTimeout(timeoutId);
+      if (fetchError.name === 'AbortError') {
+        throw new Error('Request timeout after 90 seconds. The backend server may be down or experiencing issues. Please try again in a few minutes.');
+      }
+      throw fetchError;
     }
-    
-    const data = await response.json();
-    console.log('Menu data received');
-    
-    return data;
   } catch (error: any) {
     console.error('Error fetching menu:', error);
     throw new Error(error.message || 'Failed to fetch menu data');
