@@ -55,7 +55,7 @@ apiRouter.get("/menu", async (req, res) => {
 });
 
 // Catch-all for API router to handle unmatched API routes (must be last in router)
-apiRouter.use("*", (req, res) => {
+apiRouter.use((req, res) => {
   console.log("API route not found in router:", req.originalUrl);
   res.status(404).json({ error: "API endpoint not found", path: req.path });
 });

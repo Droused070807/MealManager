@@ -8,6 +8,13 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     proxy: {
+      // Proxy API requests to backend server in development
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+        secure: false,
+      },
+      // Legacy proxy for dineoncampus (no longer used, but keeping for reference)
       '/api/dineoncampus': {
         target: 'https://dineoncampus.com',
         changeOrigin: true,

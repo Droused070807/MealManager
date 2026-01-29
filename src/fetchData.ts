@@ -1,4 +1,5 @@
-// Use same origin if deployed together, otherwise use env var or localhost
+// In development, Vite proxy handles /api routes
+// In production, use env var or same origin (if deployed together)
 const API_URL = import.meta.env.VITE_API_URL || 
   (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3001');
 
