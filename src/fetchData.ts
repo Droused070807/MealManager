@@ -1,9 +1,8 @@
 // Use Netlify Functions for API calls
-const API_URL = import.meta.env.VITE_API_URL || '/.netlify/functions';
-
 export const fetchData = async (date: string, meal?: string): Promise<unknown> => {
   try {
-    const url = new URL(`${API_URL}/menu`, window.location.origin);
+    // Netlify Functions are at /.netlify/functions/[function-name]
+    const url = new URL('/.netlify/functions/menu', window.location.origin);
     url.searchParams.set('date', date);
     if (meal) {
       url.searchParams.set('meal', meal);
