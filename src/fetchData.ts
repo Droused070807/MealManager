@@ -1,45 +1,60 @@
-// In development, Vite proxy handles /api routes
-// In production, use env var or same origin (if deployed together)
-const API_URL = import.meta.env.VITE_API_URL || 
-  (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3001');
+// Client-side data fetching - no backend needed!
+const LOCATION_ID = "66c79443351d5300dddee979"; // LSU 459 Commons
+
+const API_BASE = "https://apiv4.dineoncampus.com";
 
 export const fetchData = async (date: string, meal?: string): Promise<unknown> => {
-  const url = new URL(`${API_URL}/api/menu`);
-  url.searchParams.set('date', date);
-  if (meal) {
-    url.searchParams.set('meal', meal);
-  }
-
-  const urlString = url.toString();
-  console.log('Fetching from:', urlString);
-
-  // Add timeout to prevent infinite hanging
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
-
   try {
-    const res = await fetch(urlString, { signal: controller.signal });
-    clearTimeout(timeoutId);
+    console.log('Fetching menu data for:', { date, meal });
 
-    // Check content type to ensure we're getting JSON, not HTML
-    const contentType = res.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
-      const text = await res.text();
-      console.error('Received non-JSON response:', text.substring(0, 200));
-      throw new Error(`Expected JSON but received ${contentType}. The API route may not be working correctly.`);
+    // Step 1: Fetch available periods for the date
+    const periodsUrl = `${API_BASE}/locations/${LOCATION_ID}/periods/?date=${date}`;
+    console.log('Fetching periods from:', periodsUrl);
+    
+    const periodsResponse = await fetch(periodsUrl);
+    if (!periodsResponse.ok) {
+      throw new Error(`Failed to fetch periods: ${periodsResponse.status}`);
+    }
+    
+    const periodsData = await periodsResponse.json();
+    console.log('Periods data:', periodsData);
+
+    if (!periodsData.periods || periodsData.periods.length === 0) {
+      throw new Error(`Meal period "${meal}" not found for date ${date}. Available periods: none`);
     }
 
-    if (!res.ok) {
-      const error = await res.json().catch(() => ({ error: 'Backend failed to fetch menu data' }));
-      throw new Error(error.error || `HTTP error! status: ${res.status}`);
+    // Step 2: Find the requested meal period
+    let periodObj;
+    if (meal) {
+      periodObj = periodsData.periods.find(
+        (p: any) => p.name.toLowerCase() === meal.toLowerCase()
+      );
+      if (!periodObj) {
+        const available = periodsData.periods.map((p: any) => p.name).join(", ");
+        throw new Error(`Meal period "${meal}" not found for date ${date}. Available periods: ${available}`);
+      }
+    } else {
+      // If no meal specified, use the first available period
+      periodObj = periodsData.periods[0];
     }
 
-    return await res.json();
+    console.log('Using period:', periodObj);
+
+    // Step 3: Fetch menu for the period
+    const menuUrl = `${API_BASE}/locations/${LOCATION_ID}/menu?date=${date}&period=${periodObj.id}`;
+    console.log('Fetching menu from:', menuUrl);
+    
+    const menuResponse = await fetch(menuUrl);
+    if (!menuResponse.ok) {
+      throw new Error(`Failed to fetch menu: ${menuResponse.status}`);
+    }
+    
+    const menuData = await menuResponse.json();
+    console.log('Menu data received');
+
+    return menuData;
   } catch (error: any) {
-    clearTimeout(timeoutId);
-    if (error.name === 'AbortError') {
-      throw new Error('Request timeout - the server took too long to respond. The backend may be starting up (Render free tier can take 50+ seconds on first request).');
-    }
-    throw error;
+    console.error('Error fetching menu:', error);
+    throw new Error(error.message || 'Failed to fetch menu data');
   }
 };
