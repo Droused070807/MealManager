@@ -29,12 +29,22 @@ exports.handler = async (event) => {
 
     console.log('Fetching menu for:', { date, meal });
 
+    // Headers to mimic a browser request
+    const fetchHeaders = {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Accept': 'application/json, text/plain, */*',
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Referer': 'https://lsu.campusdish.com/',
+      'Origin': 'https://lsu.campusdish.com',
+    };
+
     // Step 1: Fetch periods
     const periodsUrl = `${API_BASE}/locations/${LOCATION_ID}/periods/?date=${date}`;
     console.log('Fetching periods from:', periodsUrl);
     
-    const periodsResponse = await fetch(periodsUrl);
+    const periodsResponse = await fetch(periodsUrl, { headers: fetchHeaders });
     if (!periodsResponse.ok) {
+      console.error('Periods fetch failed:', periodsResponse.status, periodsResponse.statusText);
       throw new Error(`Failed to fetch periods: ${periodsResponse.status}`);
     }
     
@@ -74,8 +84,9 @@ exports.handler = async (event) => {
     const menuUrl = `${API_BASE}/locations/${LOCATION_ID}/menu?date=${date}&period=${periodObj.id}`;
     console.log('Fetching menu from:', menuUrl);
     
-    const menuResponse = await fetch(menuUrl);
+    const menuResponse = await fetch(menuUrl, { headers: fetchHeaders });
     if (!menuResponse.ok) {
+      console.error('Menu fetch failed:', menuResponse.status, menuResponse.statusText);
       throw new Error(`Failed to fetch menu: ${menuResponse.status}`);
     }
     
