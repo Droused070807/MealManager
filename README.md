@@ -1,220 +1,64 @@
-# Food For The Day - LSU Dining Menu
+# LSU Dining Menu Manager
 
-A modern web app to view daily menus from LSU's 459 Commons dining hall. Built with React, TypeScript, Vite, and Tailwind CSS.
+A modern web app to browse LSU dining hall menus and plan your meals with nutrition tracking.
 
 ## Features
 
-- 🍽️ View breakfast, lunch, and dinner menus
-- 📊 See nutritional information (calories, protein, carbs, fat, sugar)
-- 🌱 Filter by vegan/vegetarian options
-- 🏆 Highlight highest protein options
-- 📱 Fully responsive design
-- ⚡ Fast and optimized
-
-## Tech Stack
-
-- **Frontend**: React 19, TypeScript, Vite, Tailwind CSS
-- **Backend**: Node.js, Express, Puppeteer
-- **Icons**: Lucide React
-
-## Local Development
-
-### Prerequisites
-
-- Node.js 18+ and npm
-- Chrome/Chromium (for Puppeteer)
-
-### Setup
-
-1. **Clone the repository**
-   ```bash
-   git clone <your-repo-url>
-   cd FoodForTheDay
-   ```
-
-2. **Install frontend dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Install backend dependencies**
-   ```bash
-   cd server
-   npm install
-   cd ..
-   ```
-
-4. **Start the backend server**
-   ```bash
-   cd server
-   npm start
-   # Server runs on http://localhost:3001
-   ```
-
-5. **Start the frontend dev server** (in a new terminal)
-   ```bash
-   npm run dev
-   # App runs on http://localhost:5173
-   ```
-
-6. **Open your browser**
-   Navigate to `http://localhost:5173`
+- 📅 Browse daily menus for breakfast, lunch, and dinner
+- 🥗 Filter by dietary preferences (vegan, vegetarian, high protein, low calorie)
+- 📊 Track nutrition (protein, carbs, fat, sugar, calories)
+- 🎯 Set protein goals and get smart recommendations
+- 📱 Fully responsive mobile design
+- 🎨 Beautiful dark theme with glassmorphism effects
 
 ## Deployment
 
-### Option 1: Vercel (Frontend) + Railway (Backend) - Recommended
+### Frontend (Netlify)
+1. Push code to GitHub
+2. Connect repo to Netlify
+3. Set environment variable: `VITE_API_URL` to your backend URL
+4. Deploy!
 
-#### Deploy Frontend to Vercel:
+### Backend (Render)
+1. Go to [render.com](https://render.com)
+2. Create new Web Service from GitHub repo
+3. Set Root Directory: `server`
+4. Build Command: `npm install`
+5. Start Command: `npm start`
+6. Deploy!
 
-1. **Push your code to GitHub**
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit"
-   git remote add origin <your-github-repo>
-   git push -u origin main
-   ```
+### Environment Variables
 
-2. **Deploy to Vercel**
-   - Go to [vercel.com](https://vercel.com)
-   - Click "New Project"
-   - Import your GitHub repository
-   - Set build command: `npm run build`
-   - Set output directory: `dist`
-   - Add environment variable:
-     - `VITE_API_URL` = `https://your-backend-url.railway.app`
-   - Click "Deploy"
-
-#### Deploy Backend to Railway:
-
-1. **Install Railway CLI** (optional)
-   ```bash
-   npm i -g @railway/cli
-   railway login
-   ```
-
-2. **Deploy via Railway Dashboard**
-   - Go to [railway.app](https://railway.app)
-   - Click "New Project" → "Deploy from GitHub repo"
-   - Select your repository
-   - Set root directory to `server`
-   - Railway will auto-detect Node.js
-   - Add environment variables if needed
-   - Deploy!
-
-3. **Get your backend URL**
-   - Railway will provide a URL like `https://your-app.railway.app`
-   - Update `VITE_API_URL` in Vercel with this URL
-
-### Option 2: Netlify (Frontend) + Render (Backend)
-
-#### Deploy Frontend to Netlify:
-
-1. **Push to GitHub** (same as above)
-
-2. **Deploy to Netlify**
-   - Go to [netlify.com](https://netlify.com)
-   - Click "Add new site" → "Import an existing project"
-   - Connect to GitHub and select your repo
-   - Build settings:
-     - Build command: `npm run build`
-     - Publish directory: `dist`
-   - Add environment variable:
-     - `VITE_API_URL` = `https://your-backend-url.onrender.com`
-   - Click "Deploy site"
-
-#### Deploy Backend to Render:
-
-1. **Go to Render Dashboard**
-   - Visit [render.com](https://render.com)
-   - Click "New" → "Web Service"
-   - Connect your GitHub repository
-
-2. **Configure the service**
-   - Name: `food-for-the-day-api`
-   - Root Directory: `server`
-   - Environment: `Node`
-   - Build Command: `npm install`
-   - Start Command: `node index.js`
-   - Plan: Free (or paid for better performance)
-
-3. **Add environment variables** (if needed)
-   - Click "Environment" tab
-   - Add any required variables
-
-4. **Deploy**
-   - Click "Create Web Service"
-   - Render will build and deploy your backend
-   - Copy the provided URL and update `VITE_API_URL` in Netlify
-
-### Option 3: Full Stack on Railway
-
-Deploy both frontend and backend on Railway:
-
-1. **Create two services on Railway**
-   - Service 1: Frontend (root directory: `.`)
-   - Service 2: Backend (root directory: `server`)
-
-2. **Configure Frontend Service**
-   - Build Command: `npm run build`
-   - Start Command: `npx serve -s dist -l $PORT`
-   - Add environment variable: `VITE_API_URL` = `${{Backend.RAILWAY_PUBLIC_DOMAIN}}`
-
-3. **Configure Backend Service**
-   - Start Command: `node index.js`
-   - No build command needed
-
-## Environment Variables
-
-### Frontend (.env)
-```env
-VITE_API_URL=http://localhost:3001  # Local development
-# VITE_API_URL=https://your-backend-url.railway.app  # Production
+Create a `.env` file in the root:
+```
+VITE_API_URL=https://your-backend-url.onrender.com
 ```
 
-### Backend
-- `PORT` - Server port (default: 3001, auto-set by hosting platform)
+## Local Development
 
-## Build for Production
-
+1. Install dependencies:
 ```bash
-# Build frontend
-npm run build
-
-# Preview production build
-npm run preview
+npm install
+cd server && npm install && cd ..
 ```
 
-## Project Structure
-
-```
-FoodForTheDay/
-├── src/                    # Frontend source code
-│   ├── components/         # React components
-│   ├── types/             # TypeScript types
-│   └── App.tsx            # Main app component
-├── server/                # Backend server
-│   ├── index.js           # Express server
-│   └── scrape.js          # Puppeteer scraper
-├── dist/                  # Production build (generated)
-└── package.json           # Frontend dependencies
+2. Start backend:
+```bash
+cd server
+npm start
 ```
 
-## Troubleshooting
+3. Start frontend (in another terminal):
+```bash
+npm run dev
+```
 
-### Backend Issues
-- **Puppeteer not working**: Make sure Chrome/Chromium is installed
-- **CORS errors**: Check that `cors` middleware is enabled
-- **Slow scraping**: First request is slower due to browser initialization
+## Tech Stack
 
-### Frontend Issues
-- **API connection failed**: Check `VITE_API_URL` environment variable
-- **Build errors**: Run `npm run build` locally to see errors
+- **Frontend**: React, TypeScript, Tailwind CSS, Vite
+- **Backend**: Node.js, Express, Puppeteer
+- **Deployment**: Netlify (frontend) + Render (backend)
 
 ## License
 
 MIT
-
-## Contributing
-
-Contributions welcome! Please open an issue or submit a pull request.
